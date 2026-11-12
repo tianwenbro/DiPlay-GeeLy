@@ -1,85 +1,78 @@
-# DiPlay
+# Diplay Geely · 吉利星越L 2025款揽星 CarPlay 投屏适配
 
-[English](README.md) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md)
+[English](README.en.md) · **简体中文** · [繁體中文](README.zh-TW.md)
 
-**CarPlay for compatible BYD Android head units.** Wired and wireless, with the familiar DiAuto interface. Independent app: `com.shihab.diplay`.
+✔ **星越L 25款揽星 · KX11 实车验证** · v0.2.22.5 · GPL-3.0 开源 · 免越狱 · 免改装
 
-> **This repository is a Geely (吉利) adaptation of DiPlay.**
-> Based on [shihabal3amri/DiPlay](https://github.com/shihabal3amri/DiPlay) v0.2.22, branch `tianwen_dev`.
-> It is not the upstream BYD build and is not supported by the upstream author.
->
-> Verified installed and running on a **Geely Xingyue L (KX11, 2025 Lanxing trim)**. Other Geely models, head units and firmware versions are untested.
->
-> Geely-specific additions: factory ECARX hotspot handling, Geely steering-wheel key mapping and learning, HUD/cluster navigation projection with an editable layout, full-map projection to the cluster, Geely audio routing, and a `vehicle-probe` bridge for factory vehicle properties.
->
-> Build notes: output APKs are `Diplay-Geely-25-XingYue-L-v<version>.apk` (debug: `…-hud-test.apk`) and `Geely-25-XingYue-L-Vehicle-Bridge-v<version>.apk`; both versionNames come from `GEELY_VERSION_NAME` in `gradle.properties`. The CarPlay accessory identity (`offline-mfi/identity.pk8`, `certificate.p7b`) and the release keystore are not in the repository and must be supplied locally. Still not an Apple-certified product; the bundled identity is experimental.
->
-> Sync upstream with `git fetch upstream && git merge upstream/main`.
->
-> Geely-specific install guide (Simplified Chinese): [docs/GEELY-INSTALL.zh-CN.md](docs/GEELY-INSTALL.zh-CN.md) · Contributing: [CONTRIBUTING.md](CONTRIBUTING.md)
->
-> **Disclaimer.** This is an independent, experimental adaptation. It is not affiliated with, endorsed by or connected to Geely, ECARX, Apple, BYD or any car manufacturer. All brand and product names are trademarks of their respective owners and are used for identification only. The software is provided "as is" without warranty of any kind — install and use at your own risk. Reverse-engineered vehicle interfaces may change or misbehave with any firmware update; never rely on this app for safety-critical information while driving, and always test while parked.
+把有线 / 无线 CarPlay 带进吉利星越L（KX11）车机：方向盘按键直控、车速续航温度实时显示、导航投进仪表 HUD。
 
-> **BYD support scope:** These projects focus on BYD cars. They may work on other brands, but other brands are unsupported and there are no plans to add support or fix brand-specific incompatibilities. This branch's Geely adaptation is described above.
-
-[Download & website](https://tianwenbro.github.io/DiPlay-GeeLy/) · [Release](https://github.com/tianwenbro/DiPlay-GeeLy/releases/latest) · [Report a problem](https://github.com/tianwenbro/DiPlay-GeeLy/issues/new/choose)
+**在线网站**：[tianwenbro.github.io/DiPlay-GeeLy](https://tianwenbro.github.io/DiPlay-GeeLy/) · **下载**：[Releases](https://github.com/tianwenbro/DiPlay-GeeLy/releases/latest) · **问题反馈**：[Issues](https://github.com/tianwenbro/DiPlay-GeeLy/issues/new/choose)
 
 ![DiPlay home](site/assets/home.png)
 
-## 0.2.22 — public preview
+## 01 安装到星越L（三步上车）
 
-Install on the **car**, not the iPhone. No jailbreak, dongle, Mac, account or authentication server is required for use. Core CarPlay does not require ADB; optional dashboard, battery, wheel-speed and parked-video features do. Your head unit must permit APK installation. The APK supports Android 7.0+ (API 24); on Android 7.0–8.1, wired CarPlay is confirmed on one car and wireless is not yet confirmed on a vehicle. Wireless supports Wi-Fi Direct, the car’s existing hotspot or Existing Wi-Fi / Same LAN. Android 7.0–9 Wi-Fi Direct uses a firmware-dependent legacy path with generated group credentials and unverified requested frequency; see [Android 9 Wi-Fi Direct](docs/ANDROID9_WIFI_DIRECT.md). Android 10+ verifies its negotiated group frequency.
+1. **下载并安装两个 APK**：点击下方下载链接，或到 [Releases](https://github.com/tianwenbro/DiPlay-GeeLy/releases) 页；用 **U 盘**或 `adb install` 装进车机（车机浏览器无法安装）。**先装车桥，再装主应用，两包必须配套安装、缺一不可**——车桥负责读取车速 / 续航 / 温度等车况，只装主应用会缺车况数据，只装车桥无法投屏。
+2. **配置车辆**：打开主应用，授予蓝牙 / 位置 / 麦克风权限；先在**设置 → 关于**连点版本号 7 次解锁开发者选项，再进入**设置 → 左侧「车辆」→ 车辆属性 → 车型属性配置**，选择车辆 **星越 L · KX11（25 揽星）**并**保存配置**；进入**「车辆扫描」**页点**右上角设置**，车桥连接状态显示 READY 即正常。
+3. **连接 iPhone**：USB 数据线连接即插即用（首次 USB 连接前需按下方说明用 ADB 放行一次 VPN）。普通安卓会弹「VPN 连接请求」，星越L（OneOS 车机）通常不弹这个框；无线方式先连车机内置热点，完成一次蓝牙配对，再按设置里的连接引导操作，**无线连接无需 ADB 授权**。
 
-- Wired USB and wireless CarPlay with local authentication.
-- BYD HUD navigation with arrows, distance and street names on verified firmware.
-- Car hotspot support, improved audio buffering and saved receive diagnostics.
-- Automatic address discovery, fixed-channel Wi-Fi fallbacks and successful-configuration memory.
-- Icon/text size, resolution and frame rate; applying a display change reconnects CarPlay.
-- Local diagnostic export. Reports are sent only if you choose to share them.
-- Separate installation alongside DiAuto. Run one projection app at a time.
+> ⚠ **星越L 用 USB 连接 CarPlay 必做：先用 ADB 放行 VPN（否则 USB 连不上 CarPlay）。**此操作**仅 USB 连接需要**，蓝牙/无线连接不需要这一步。首次 USB 连接之前，车机连电脑开启 ADB 调试并执行：
+>
+> ```
+> adb shell appops set com.shihab.diplay ACTIVATE_VPN allow
+> ```
+>
+> 如果用的是 ATV Tools 等**无线 ADB**（手机连车机），在其终端里执行（无需 adb shell 前缀）：`appops set com.shihab.diplay ACTIVATE_VPN allow`
+>
+> 执行一次即可长期生效。应用内连接帮助页也会显示这条命令，车桥若有车机 ADB 权限也会尝试自动授权；换装不同包名的版本后需对新包名再执行一次。
 
-This is **not an Apple-certified product**. The APK bundles an experimental accessory identity recovered from public Carlinkit firmware, not a newly provisioned MFi identity for DiPlay. A bundled private key is extractable. Acceptance after future iOS updates, reliability across head units and suitability of that identity for general distribution are unresolved. This release invites community testing; it is not a guarantee of universal compatibility.
+> **装过其他 DiPlay / 车桥？请先卸载再装。**本仓库主应用与上游原版 DiPlay 等改编版共用包名（`com.shihab.diplay`），签名不同，未卸载旧版会提示「应用未安装」；即使包名不同、能并存的其他版本，也会抢占 USB / 音频 / 无线连接导致冲突。卸载方法：车机「设置 → 应用管理」找到旧版逐个卸载，或用 `adb uninstall com.shihab.diplay` / `adb uninstall com.geely.desktop.vehicle.bridge`（其他版本以实际包名为准）。卸载会清除旧版配置，装好后按上面步骤重新配置一次即可；本仓库自己的版本之间可直接覆盖升级（签名一致）。
 
-Earlier releases were tested on the development DiLink5.1 car: live windshield guidance and street names work, Car hotspot now starts CarPlay, and Wi-Fi Direct performance is substantially improved. Audio underrun recovery is improved in 0.2.15; remaining cutouts need current diagnostic reports. The 0.2.16 software Opus microphone fallback was accepted on a BOS Mini A1 head unit (Android 9) with an iPhone 12 on iOS 27. The floating-map test build was installed on the development DiLink 5.1 car; feedback led to the pinch corrections in 0.2.9. Earlier wheel-speed and video contributions were tested on a BYD Tang with DiLink 5.0 and an iPhone 15 Pro on iOS 27; wheel-speed dead reckoning in tunnels remains unverified. Broader head-unit and iOS compatibility is not guaranteed. The HUD firmware scope and cleanup limits are documented in [BYD navigation](docs/BYD_NAVIGATION.md).
+📘 **详细安装请看这里**：方控按键、车况数据与 HUD 投屏在连接成功后自动生效；完整图文教程（含排障表）见 **[吉利安装说明（简体中文）](docs/GEELY-INSTALL.zh-CN.md)**。
 
-## What’s new in 0.2.22
+## 02 下载与更新
 
-- Wireless CarPlay over the car hotspot connects again on BYD DiLink 3.0 and 4.0 head units where 0.2.21 stayed on "Opening CarPlay"; the **Hotspot interface (optional)** workaround can be cleared.
-- Music plays at the iPhone's speed over Wi-Fi again, from the first second of every song, without the 0.2.21 speed-up and stutter.
-- Over USB, WeChat voice messages, Voice Memos and dictation record your voice instead of silence.
-- Wired CarPlay connects on the first attempt after a replug, and the CarPlay screen and Home say why a connection failed and what to change.
-- DiPlay is available in Korean and Turkish.
-- New options, off by default: keep CarPlay in the launcher card, navigation prompts that ask for audio focus, calls at the call's own rate, a full-screen DiLink 3.0 dashboard map and the dashboard map on the Denza N9.
+| 文件 | 说明 |
+|---|---|
+| [Diplay-Geely-25-XingYue-L-v0.2.22.5.apk](https://github.com/tianwenbro/DiPlay-GeeLy/releases/download/v0.2.22.5/Diplay-Geely-25-XingYue-L-v0.2.22.5.apk) | 主应用（CarPlay 投屏） |
+| [Geely-25-XingYue-L-Vehicle-Bridge-v0.2.22.5.apk](https://github.com/tianwenbro/DiPlay-GeeLy/releases/download/v0.2.22.5/Geely-25-XingYue-L-Vehicle-Bridge-v0.2.22.5.apk) | 车辆数据车桥（只读车速 / 续航 / 温度） |
+| [SHA256SUMS.txt](https://github.com/tianwenbro/DiPlay-GeeLy/releases/download/v0.2.22.5/SHA256SUMS.txt) | 发布包校验和 |
 
-See [0.2.22 release notes](docs/RELEASE-NOTES-0.2.22.md) and [validation](docs/VALIDATION.md) for contribution links and remaining physical tests. General stutter, calls/Siri, decoder and model-specific reports still need current-device evidence. [0.2.21 notes](docs/RELEASE-NOTES-0.2.21.md) remain available as historical guidance.
+升级直接覆盖安装即可保留配置（两包签名一致），**请勿卸载重装**（会丢配置）。历史版本与校验文件见 [Releases](https://github.com/tianwenbro/DiPlay-GeeLy/releases)。
 
-If a problem remains, reproduce it on **0.2.22**, then use **Settings → Diagnostics → Save diagnostic report**. Android 10+ normally saves to **Downloads/DiPlay**; Android 7.0–9 asks for storage access and saves there too. If unavailable, use **View report** or **Share** from the confirmation, which identifies external/private fallback storage. Review the `.txt` and attach it as a file to a matching [existing issue](https://github.com/shihabal3amri/DiPlay/issues), or [create one](https://github.com/shihabal3amri/DiPlay/issues/new/choose). Include vehicle/head-unit model, exact firmware and Android/DiLink, phone/iOS, connection backend, relevant settings, steps and failure time. Reports are shared only when you choose; never post your hotspot password.
+## 03 适用范围
 
-## Documentation
+- 本项目面向**吉利星越L 2025 款 揽星**（车机 KX11_A2 · ECARX / OneOS · Android 11），已在实车完成安装与验证。
+- 其他吉利 / ECARX 车机可以尝试安装，但未做完整验证；**非吉利车型请使用[上游原版 DiPlay](https://github.com/shihabal3amri/DiPlay)**。
 
-[Existing Wi-Fi / Same LAN](docs/EXISTING_WIFI.md) keeps the iPhone and head unit
-on an external router. See the guide for setup, build requirements and the
-BYD DiLink 4.0 / Android 10 clean-install validation result.
+## 免责声明
 
-- [Install and connect](docs/INSTALL.md)
-- [Compatibility and troubleshooting](docs/COMPATIBILITY.md)
-- [Smooth wireless CarPlay](docs/SMOOTH_WIRELESS.md)
-- [Privacy and diagnostic reports](docs/PRIVACY.md)
-- [Build from source](docs/BUILD.md) — select `mobile` for the main DiPlay app; `maphost` is a map sample.
-- [Validation](docs/VALIDATION.md)
-- [Release notes](CHANGELOG.md)
-- [Credits and licenses](docs/THIRD_PARTY_NOTICES.md)
+本项目为非官方第三方项目，与吉利汽车、亿咖通（ECARX）、苹果（Apple）无关联、未获其官方认可或授权。CarPlay 是 Apple Inc. 的商标。向车机侧载第三方应用可能影响车机稳定性、OTA 与整车质保，请自行评估。**请停车操作，行车安全第一**；应用显示的信息仅供参考，以车辆仪表与交通信号为准。软件按「现状」提供，不附带任何担保。
 
-The app and the website include English, Arabic, Russian, Ukrainian, Spanish, Simplified Chinese, Traditional Chinese (Taiwan), Japanese, Italian, Korean and Turkish. Traditional Chinese uses Taiwan wording; the app also recognizes Hong Kong/Macao and explicit Hant selections without claiming separate regional translations. Choose the app language in Settings; on Android 13+, it stays synchronized with Android’s per-app language setting. See the [Traditional Chinese guide](README.zh-TW.md) for installation, settings, troubleshooting, privacy and build instructions.
+## 文档
 
-## Source and credits
+吉利适配文档（简体中文）：
 
-Based on [xcertplay](https://github.com/shilapi/xcertplay), GPL-3.0. The home/settings UI and website adapt [DiAuto](https://github.com/shihabal3amri/DiAuto), AGPL-3.0; that license is included in `docs/licenses`. Preserve those notices when distributing modifications. CarPlay and its icon belong to Apple Inc.; no Apple or BYD affiliation or endorsement is implied.
+- [吉利安装说明（简体中文）](docs/GEELY-INSTALL.zh-CN.md) — 详细图文教程，含 KX11 可读字段与排障表
+- [参与贡献](CONTRIBUTING.md)
 
-The Geely vehicle integration — the `vehicle-probe` module, vehicle map projection and Geely steering key support in `common`, the ECARX hotspot reading and audio coordination helpers in `shared`, and the steering-profile server — incorporates code from the [carlito12345/DiPlay](https://github.com/carlito12345/DiPlay) fork, GPL-3.0, which is itself based on shihabal3amri/DiPlay. Original `carlito |` source comments and vehicle profile attributions are preserved as the license requires. The separately installed `vehicle-bridge` APK is an independent implementation and contains no code from that fork.
+通用文档（继承自上游，英文，面向上游通用场景、含比亚迪车型内容）：
 
-This repository starts with a clean public source snapshot. Local research, tester reports and release-signing secrets are excluded. The complete source corresponding to the APK is provided with every release; experimental runtime identity assets are described separately in the build instructions and notices.
+- [安装与连接](docs/INSTALL.md) · [兼容性与排障](docs/COMPATIBILITY.md) · [隐私说明](docs/PRIVACY.md) · [从源码构建](docs/BUILD.md) · [第三方声明](docs/THIRD_PARTY_NOTICES.md) · [发布记录](CHANGELOG.md)
 
-## Local release packaging
+## 来源与致谢
 
-The release APK intentionally contains the experimental accessory identity. The Git repository and source archive exclude all accessory and Android signing keys; tests generate synthetic identities at runtime. Source/CI builds omit runtime identity assets by default. Local release builds explicitly select an external asset directory. Publishing the APK makes its bundled identity extractable; building locally does not preserve that identity's confidentiality.
+本项目基于 [shihabal3amri/DiPlay](https://github.com/shihabal3amri/DiPlay)（GPL-3.0），其上游源于 [xcertplay](https://github.com/shilapi/xcertplay)；主界面/设置与网站改编自 [DiAuto](https://github.com/shihabal3amri/DiAuto)（AGPL-3.0，许可见 `docs/licenses`）。
+
+来源声明：吉利适配中的 `vehicle-probe` 模块、车辆地图投屏与吉利方控支持（`common`）、ECARX 热点读取与音频协调（`shared`）及方向盘配置服务端，代码取自 [carlito12345/DiPlay](https://github.com/carlito12345/DiPlay) fork（GPL-3.0，同样基于 shihabal3amri/DiPlay），源码中的 `carlito |` 注释与车辆 profile 作者标记按许可要求予以保留。单独安装的 `vehicle-bridge` APK 为独立实现，不含该 fork 代码。
+
+吉利相关新增：ECARX 原厂热点处理、吉利方向盘按键映射与按键识别、HUD／仪表导航投屏及可编辑布局、全屏地图投至仪表、吉利音频路由，以及用于读取原厂车辆属性的 `vehicle-probe` 桥接。
+
+## 构建
+
+- 版本号统一来自 [gradle.properties](gradle.properties) 的 `GEELY_VERSION_NAME`，主应用与车桥共用。
+- 产物：`Diplay-Geely-25-XingYue-L-v<版本>.apk`（debug 为 `…-hud-test.apk`）与 `Geely-25-XingYue-L-Vehicle-Bridge-v<版本>.apk`。
+- CarPlay 配件身份文件（`offline-mfi/identity.pk8`、`certificate.p7b`）与 release 签名密钥**不在仓库内**，需要本地自备；普通源码 / CI 构建默认不配置身份。构建细节见 [BUILD.md](docs/BUILD.md)。
+- 同步上游：`git fetch upstream && git merge upstream/main`。
+
+本项目仍非 Apple 认证产品，APK 内置从公开 Carlinkit 固件提取的实验性配件身份，详见[第三方声明](docs/THIRD_PARTY_NOTICES.md)。
