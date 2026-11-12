@@ -53,6 +53,9 @@
   code { background: #f3f4f6; padding: 1px 5px; border-radius: 4px; font-size: .9em; }
   .tip { background: #eef6ff; border: 1px solid #c8dcf5; border-radius: 12px;
          padding: 14px 20px; font-size: .93rem; }
+  .guide { background: #eef3ff; border: 2px solid #2456c4; border-radius: 12px;
+           padding: 16px 22px; font-size: 1.02rem; margin: 1.4rem 0; }
+  .guide a { font-weight: 700; }
   [hidden] { display: none !important; }
 </style>
 </head>
@@ -98,7 +101,7 @@
   <div class="tip">
     <strong>装过其他 DiPlay / 车桥？请先卸载再装。</strong>本仓库主应用与上游原版 DiPlay 等改编版共用包名（<code>com.shihab.diplay</code>），签名不同，未卸载旧版会提示「应用未安装」；即使包名不同、能并存的其他版本，也会抢占 USB / 音频 / 无线连接导致冲突。卸载方法：车机「设置 → 应用管理」找到旧版逐个卸载，或用 <code>adb uninstall com.shihab.diplay</code> / <code>adb uninstall com.geely.desktop.vehicle.bridge</code>（其他版本以实际包名为准）。卸载会清除旧版配置，装好后按上面步骤重新配置一次即可；本仓库自己的版本之间可直接覆盖升级（签名一致）。
   </div>
-  <p>方控按键、车况数据与 HUD 投屏在连接成功后自动生效。详细图文（含排障表）见 <a href="GEELY-INSTALL.zh-CN.html">吉利安装说明（简体中文）</a>。</p>
+  <div class="guide">📘 <strong>详细安装请看这里</strong>：方控按键、车况数据与 HUD 投屏在连接成功后自动生效；完整图文教程（含排障表）见 <a href="GEELY-INSTALL.zh-CN.html">吉利安装说明（简体中文）</a>。</div>
 
   <h2><span class="num">02</span>下载与更新</h2>
   <table class="apk">
@@ -162,7 +165,7 @@
   <div class="tip">
     <strong>Installed another DiPlay / bridge before? Uninstall it first.</strong> This build shares its package name (<code>com.shihab.diplay</code>) with upstream DiPlay and other variants but uses a different signature — without uninstalling, install fails with "App not installed". Variants with different package names may coexist but fight over USB / audio / wireless and cause conflicts. How to remove: head unit <em>Settings → Apps</em>, uninstall each old app, or <code>adb uninstall com.shihab.diplay</code> / <code>adb uninstall com.geely.desktop.vehicle.bridge</code> (use the actual package name for other variants). Uninstalling clears old settings — reconfigure once after installing. Updates between builds of this repo install over each other (same signature).
   </div>
-  <p>Wheel keys, vehicle data and HUD activate automatically once connected. Full illustrated guide: <a href="GEELY-INSTALL.zh-CN.html">Geely install guide (Simplified Chinese)</a>.</p>
+  <div class="guide">📘 <strong>For the full walkthrough</strong>: wheel keys, vehicle data and HUD activate automatically once connected. The complete illustrated guide (with a troubleshooting table) is the <a href="GEELY-INSTALL.zh-CN.html">Geely install guide (Simplified Chinese)</a>.</div>
 
   <h2><span class="num">02</span>Downloads &amp; updates</h2>
   <table class="apk">
