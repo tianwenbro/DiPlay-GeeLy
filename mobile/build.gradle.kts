@@ -21,7 +21,7 @@ android {
         applicationId = "com.shihab.diplay"
         minSdk = 24
         targetSdk = 37
-        versionCode = 44
+        versionCode = 45
         versionName = geelyVersionName
 
     }
