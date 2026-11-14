@@ -75,11 +75,7 @@ internal object GeelyHudProjection : DisplayManager.DisplayListener {
 
     fun detach(activity: Activity) {
         mainHandler.post {
-            // Skip only when a different live activity owns the window. If the reference
-            // was already collected, detach anyway: a leaked overlay would keep covering
-            // the vehicle's own HUD until the head unit reboots.
-            val owner = activityRef?.get()
-            if (owner != null && owner !== activity) return@post
+            if (activityRef?.get() !== activity) return@post
             detachWindow()
             stopVehicleReader()
             guidance = null
@@ -222,24 +218,17 @@ internal object GeelyHudProjection : DisplayManager.DisplayListener {
         }
         val elements = GeelyProjectionLayout.load(activity)
         val visible = elements.filter { it.visible && !(navigationHidden && it.field == ProjectionField.NAVIGATION) }
-        // The HUD window must exist only while route guidance is active. When navigation
-        // ends the window (vehicle cards included) is removed so the vehicle's own HUD
-        // content shows through again; a new route re-attaches it automatically.
-        if (!Settings.canDrawOverlays(activity) || visible.isEmpty() || guidance == null) {
-            windowStage = when {
-                !Settings.canDrawOverlays(activity) -> "OVERLAY_PERMISSION_REQUIRED"
-                guidance == null -> "WAITING_FOR_NAVIGATION"
-                else -> "WAITING_FOR_CONTENT"
-            }
-            detachWindow()
-            stopVehicleReader()
-            return
-        }
         if (visible.any { it.field.property != null }) {
             if (vehicleReader == null) vehicleReader = ProjectionVehicleReader(activity) { value ->
                 vehicleFrame = value; hudView?.vehicle = value
             }
         } else stopVehicleReader()
+        if (!Settings.canDrawOverlays(activity) || visible.isEmpty() ||
+            guidance == null && visible.all { it.field == ProjectionField.NAVIGATION }) {
+            windowStage = if (!Settings.canDrawOverlays(activity)) "OVERLAY_PERMISSION_REQUIRED" else "WAITING_FOR_CONTENT"
+            detachWindow()
+            return
+        }
         val selected = selectedDisplay(activity)
         val display = selected?.let { choice -> displayManager?.getDisplay(choice.id)
             ?.takeIf { it.name == choice.name && it.state != Display.STATE_OFF } }
